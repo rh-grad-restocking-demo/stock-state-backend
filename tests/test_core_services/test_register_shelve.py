@@ -1,6 +1,5 @@
 from stock.core.product import SKU, Category, Product
 from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
-
 from stock.core.services.register_shelve import RegisterShelve
 
 
