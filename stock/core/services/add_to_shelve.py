@@ -1,3 +1,4 @@
+import logging
 from stock.core.shelve import ProductAmount, Shelve
 
 from stock.core.errors.shelve_capacity_exceeded import ShelveCapacityExceeded
@@ -17,4 +18,5 @@ class AddToShelve:
             shelve.product, shelve.capacity, shelve.restock_threshold,
             updated_shelve_stock_amount
         )
+        logging.debug("AddToShelve.__call__:Completed")
         return updated_shelve
