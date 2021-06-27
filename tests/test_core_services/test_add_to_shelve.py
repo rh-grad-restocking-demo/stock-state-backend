@@ -17,7 +17,7 @@ def test_add_to_shelve():
     assert updated_shelve.stock_amount == ProductAmount(25)
 
 
-def test_add_to_shelve_exceeding_capacity():
+def test_add_to_shelve_when_exceeding_capacity():
     add_to_shelve = AddToShelve()
     with pytest.raises(ShelveCapacityExceeded):
         add_to_shelve(

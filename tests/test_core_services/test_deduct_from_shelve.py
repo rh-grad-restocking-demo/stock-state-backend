@@ -18,7 +18,7 @@ def test_add_to_shelve():
     assert updated_shelve.stock_amount == ProductAmount(5)
 
 
-def test_add_to_shelve_exceeding_capacity():
+def test_add_to_shelve_when_understocked():
     deduct_from_shelve = DeductFromShelve()
     with pytest.raises(ShelveUnderstocked):
         deduct_from_shelve(
