@@ -7,10 +7,13 @@ class SKU(str):
 
 
 class Category(Enum):
-    FRESH = "fresh"
-    FROZEN = "frozen"
-    NON_PERISHABLE = "non-perishable"
-    NON_FOOD = "non-food"
+    FRESH = "FRESH"
+    FROZEN = "FROZEN"
+    NON_PERISHABLE = "NON_PERISHABLE"
+    NON_FOOD = "NON_FOOD"
+
+    def __str__(self):
+        return str(self.value)
 
 
 @dataclass(frozen=True)
