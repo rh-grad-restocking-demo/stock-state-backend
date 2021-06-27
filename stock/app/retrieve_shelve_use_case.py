@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from stock.core.shelve import Shelve
@@ -22,4 +23,5 @@ class RetrieveShelveUseCase:
             dto.product_sku)
         if not shelve:
             raise ShelveNotFound()
+        logging.info("RetrieveShelveUseCase.__call__:Completed")
         return shelve

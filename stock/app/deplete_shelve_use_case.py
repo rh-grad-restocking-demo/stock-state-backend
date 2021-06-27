@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from stock.core.shelve import ProductAmount, Shelve
@@ -33,3 +34,4 @@ class DepleteShelveUseCase:
         self._shelves_repo.save_shelve(updated_shelve)
         self._shelves_topics.send_depleted_message(
             Depleted.from_shelve(shelve, amount_to_be_depleted))
+        logging.info("DepleteShelveUseCase.__call__:Completed")

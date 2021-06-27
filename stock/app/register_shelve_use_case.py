@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 
 from stock.core.product import SKU, Category
@@ -37,3 +38,4 @@ class ReigsterShelveUseCase:
         self._shelves_repo.save_shelve(shelve)
         self._shelves_topics.send_registered_shelve_message(
             RegisteredShelve.from_shelve(shelve))
+        logging.info("ReigsterShelveUseCase.__call__:Completed")
