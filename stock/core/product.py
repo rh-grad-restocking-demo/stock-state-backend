@@ -9,8 +9,8 @@ class SKU(str):
 class Category(Enum):
     FRESH = "FRESH"
     FROZEN = "FROZEN"
-    NON_PERISHABLE = "NON_PERISHABLE"
-    NON_FOOD = "NON_FOOD"
+    NON_PERISHABLE = "NON-PERISHABLE"
+    NON_FOOD = "NON-FOOD"
 
     def __str__(self):
         return str(self.value)
