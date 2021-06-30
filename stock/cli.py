@@ -8,7 +8,7 @@ import click
 
 from stock.adapters.repositories.postgres_db import PostgresDB
 from stock.adapters.repositories.shelves_repository import ShelvesRepository
-from stock.adapters.topics.shelves_topics import ShelvesTopics
+from stock.adapters.topics.shelves_topics import ShelvesTopics, ShelvesTopicsDisabled
 from stock.app.register_shelve_use_case import RegisterShelveDTO, ReigsterShelveUseCase
 from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelveUseCase
 from stock.app.deplete_shelve_use_case import DepleteShelveDTO, DepleteShelveUseCase
@@ -21,6 +21,7 @@ DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_USERNAME = os.environ.get("DB_USERNAME", "root")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "toor")
 DB_DATABASE = os.environ.get("DB_DATABASE", "stock-state")
+BROKER_HOST = os.environ.get("BROKER_HOST", "localhost")
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -30,7 +31,7 @@ logging.basicConfig(
 postgres_db = PostgresDB(
     DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE)
 shelves_repository = ShelvesRepository(postgres_db)
-shelves_topics = ShelvesTopics()
+shelves_topics = ShelvesTopics(BROKER_HOST)
 
 
 @click.group()
@@ -50,14 +51,20 @@ def setup_db():
 @click.option('--shelve_capacity', required=True, type=int, help='Amount of products that can be on the shelve.')
 @click.option('--shelve_restock_threshold', type=int, required=True, help='Amount of stock on the shelve triggering a restock.')
 @click.option('--shelve_stock_amount', required=True, type=int, help='Current amount of stock on the shelve.')
+@click.option('--disable_messaging', default=False, help='Disable sending messages.')
 def register_shelve(
     product_sku: str,
     product_category: str,
     shelve_capacity: int,
     shelve_restock_threshold: int,
-    shelve_stock_amount: int
+    shelve_stock_amount: int,
+    disable_messaging: bool
 ):
     """Register a product shelve."""
+    global shelves_repository
+    global shelves_topics
+    if disable_messaging:
+        shelves_topics = ShelvesTopicsDisabled()
     register_shelve_use_case = ReigsterShelveUseCase(
         shelves_repository, shelves_topics)
     register_shelve_use_case(
@@ -72,6 +79,7 @@ def retrieve_shelve(
     product_sku: str
 ):
     """Retrieve information on a shelve."""
+    global shelves_repository
     retrieve_shelve_use_case = RetrieveShelveUseCase(shelves_repository)
     shelve: Shelve = retrieve_shelve_use_case(
         RetrieveShelveDTO(product_sku))
@@ -81,11 +89,17 @@ def retrieve_shelve(
 @click.command()
 @click.option('--product_sku', required=True, help='Stock-Keeping Unit acting as the ID of a product.')
 @click.option('--amount', required=True, type=int, help='Amount to be removed from shelve stock.')
+@click.option('--disable_messaging', default=False, help='Disable sending messages.')
 def deplete_shelve(
     product_sku: str,
-    amount: int
+    amount: int,
+    disable_messaging: bool
 ):
     """Remove a specific amount from the shelve stock."""
+    global shelves_repository
+    global shelves_topics
+    if disable_messaging:
+        shelves_topics = ShelvesTopicsDisabled()
     deplete_shelve_use_case = DepleteShelveUseCase(
         shelves_repository, shelves_topics)
     deplete_shelve_use_case(DepleteShelveDTO(product_sku, amount))
@@ -94,11 +108,17 @@ def deplete_shelve(
 @click.command()
 @click.option('--product_sku', required=True, help='Stock-Keeping Unit acting as the ID of a product.')
 @click.option('--amount', required=True, type=int, help='Amount to be added to shelve stock.')
+@click.option('--disable_messaging', default=False, help='Disable sending messages.')
 def restock_shelve(
     product_sku: str,
-    amount: int
+    amount: int,
+    disable_messaging: bool
 ):
     """Add a specific amount to the shelve stock."""
+    global shelves_repository
+    global shelves_topics
+    if disable_messaging:
+        shelves_topics = ShelvesTopicsDisabled()
     restock_shelve_use_case = RestockShelveUseCase(
         shelves_repository, shelves_topics)
     restock_shelve_use_case(RestockShelveDTO(product_sku, amount))
@@ -113,3 +133,10 @@ commands.add_command(restock_shelve)
 
 if __name__ == '__main__':
     commands()
+
+
+# python -m stock.cli setup-db
+# python -m stock.cli register-shelve --product_sku="testsku" --product_category="fresh" --shelve_capacity=10 --shelve_restock_threshold=5 --shelve_stock_amount=10
+# python -m stock.cli retrieve-shelve --product_sku="testsku"
+# python -m stock.cli deplete-shelve --product_sku="testsku" --amount=5
+# python -m stock.cli restock-shelve --product_sku="testsku" --amount=5
