@@ -23,3 +23,6 @@ class Shelve:
     capacity: Capacity
     restock_threshold: RestockThreshold
     stock_amount: ProductAmount
+
+    def is_restock_threshold_reached(self) -> bool:
+        return bool(self.stock_amount <= self.restock_threshold)
