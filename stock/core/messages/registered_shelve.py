@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json, LetterCase
 
 from stock.core.product import SKU, Category
 from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass(frozen=True)
 class RegisteredShelve:
     product_sku: SKU
