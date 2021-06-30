@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from stock.core.shelve import ProductAmount, Shelve
 from stock.core.services.deduct_from_shelve import DeductFromShelve
 from stock.core.messages.depleted import Depleted
+from stock.core.messages.restock_threshhold_reached import RestockThresholdReached
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
 from stock.core.interfaces.shelves_repository import ShelvesRepositoryInterface
 from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelveUseCase
@@ -34,4 +35,11 @@ class DepleteShelveUseCase:
         self._shelves_repo.save_shelve(updated_shelve)
         self._shelves_topics.send_depleted_message(
             Depleted.from_shelve(shelve, amount_to_be_depleted))
+        if ((shelve.stock_amount > shelve.restock_threshold)
+                and (updated_shelve.stock_amount < shelve.restock_threshold)):
+            logging.info(
+                "DepleteShelveUseCase.__call__:Shelve restock treshold was met")
+            self._shelves_topics.send_restock_threshold_reached_message(
+                RestockThresholdReached(
+                    shelve.product.sku, shelve.product.category))
         logging.info("DepleteShelveUseCase.__call__:Completed")
