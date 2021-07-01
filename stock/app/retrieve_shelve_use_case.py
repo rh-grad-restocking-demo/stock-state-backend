@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json, LetterCase
 
 from stock.core.shelve import Shelve
 from stock.core.errors.shelve_not_found import ShelveNotFound
@@ -11,6 +12,21 @@ class RetrieveShelveDTO:
     product_sku: str
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL)
+@dataclass(frozen=True)
+class RetrievedShelveDTO:
+    product_sku: str
+    product_category: str
+    shelve_restock_threshold: int
+    shelve_stock_amount: int
+
+    @classmethod
+    def from_shelve(Cls, shelve: Shelve):
+        return Cls(
+            shelve.product.sku, shelve.product.category,
+            shelve.restock_threshold, shelve.stock_amount)
+
+
 class RetrieveShelveUseCase:
 
     def __init__(
@@ -18,10 +34,10 @@ class RetrieveShelveUseCase:
             shelves_repo: ShelvesRepositoryInterface):
         self._shelves_repo: ShelvesRepositoryInterface = shelves_repo
 
-    def __call__(self, dto: RetrieveShelveDTO) -> Shelve:
+    def __call__(self, dto: RetrieveShelveDTO) -> RetrievedShelveDTO:
         shelve: Shelve = self._shelves_repo.retrieve_shelve_by_product_sku(
             dto.product_sku)
         if not shelve:
             raise ShelveNotFound()
         logging.info("RetrieveShelveUseCase.__call__:Completed")
-        return shelve
+        return RetrievedShelveDTO.from_shelve(shelve)
