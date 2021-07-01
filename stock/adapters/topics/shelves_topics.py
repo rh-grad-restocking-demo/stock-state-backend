@@ -1,5 +1,9 @@
 from __future__ import print_function
+
 import logging
+from typing import Callable
+import json
+
 from proton.reactor import Container
 
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
@@ -7,7 +11,9 @@ from stock.core.messages.restocked import Restocked
 from stock.core.messages.depleted import Depleted
 from stock.core.messages.restock_threshhold_reached import RestockThresholdReached
 from stock.core.messages.registered_shelve import RegisteredShelve
-from stock.adapters.topics.message_handler import MessageHandler
+from stock.core.messages.purchased_product import PurchasedProduct
+from stock.adapters.topics.send_handler import SendHandler
+from stock.adapters.topics.receive_handler import ReceiveHandler
 
 
 class ShelvesTopics(ShelvesTopicsInterface):
@@ -16,30 +22,44 @@ class ShelvesTopics(ShelvesTopicsInterface):
         self._host = host
 
     def send_restocked_message(self, message: Restocked):
-        # Container(MessageHandler(
+        # Container(SendHandler(
         #     self._host, "shelveRestocksAddress", message.to_json())
         # ).run()
         logging.warning(
             "ShelvesTopics.send_restocked_message:Not implemented")
 
     def send_depleted_message(self, message: Depleted):
-        # Container(MessageHandler(
+        # Container(SendHandler(
         #     self._host, "shelveDepletionsAddress", message.to_json())
         # ).run()
         logging.warning(
             "ShelvesTopics.send_depleted_message:Not implemented")
 
     def send_restock_threshold_reached_message(self, message: RestockThresholdReached):
-        Container(MessageHandler(
+        Container(SendHandler(
             self._host, "shelveRestockThresholdReachedAddress", message.to_json())
         ).run()
 
     def send_registered_shelve_message(self, message: RegisteredShelve):
-        # Container(MessageHandler(
+        # Container(SendHandler(
         #     self._host, "shelveRegistrationsAddress", message.to_json())
         # ).run()
         logging.warning(
             "ShelvesTopics.send_registered_shelve_message:Not implemented")
+
+    def consume_items_purchased_messages(self, message_handler: Callable[[PurchasedProduct], None]):
+        logging.info(
+            "ShelvesTopics.consume_items_purchased_messages:Will start listening for items purchased messages")
+
+        def callable(message_json: str):
+            message = json.loads(message_json)
+            purchase_product = PurchasedProduct(
+                message["sku"], message["amount"])
+            message_handler(purchase_product)
+
+        Container(ReceiveHandler(
+            self._host, "itemsPurchasedAddress", callable)
+        ).run()
 
 
 class ShelvesTopicsDisabled(ShelvesTopicsInterface):
