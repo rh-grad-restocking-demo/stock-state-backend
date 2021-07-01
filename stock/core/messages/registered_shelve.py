@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json, LetterCase
 
 from stock.core.product import SKU, Category
-from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
+from stock.core.shelve import RestockThreshold, ProductAmount, Shelve
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
@@ -10,7 +10,6 @@ from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
 class RegisteredShelve:
     product_sku: SKU
     product_category: Category
-    shelve_capacity: Capacity
     shelve_restock_threshold: RestockThreshold
     shelve_stock_amount: ProductAmount
 
@@ -18,5 +17,4 @@ class RegisteredShelve:
     def from_shelve(Cls, shelve: Shelve):
         return Cls(
             shelve.product.sku, shelve.product.category,
-            shelve.capacity, shelve.restock_threshold,
-            shelve.stock_amount)
+            shelve.restock_threshold, shelve.stock_amount)

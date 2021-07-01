@@ -48,14 +48,12 @@ def setup_db():
 @click.command()
 @click.option('--product_sku', required=True, help='Stock-Keeping Unit acting as the ID of a product.')
 @click.option('--product_category', required=True, help='Product category: fresh, frozen, non-perishable, or non-food.')
-@click.option('--shelve_capacity', required=True, type=int, help='Amount of products that can be on the shelve.')
 @click.option('--shelve_restock_threshold', type=int, required=True, help='Amount of stock on the shelve triggering a restock.')
 @click.option('--shelve_stock_amount', required=True, type=int, help='Current amount of stock on the shelve.')
 @click.option('--disable_messaging', default=False, help='Disable sending messages.')
 def register_shelve(
     product_sku: str,
     product_category: str,
-    shelve_capacity: int,
     shelve_restock_threshold: int,
     shelve_stock_amount: int,
     disable_messaging: bool
@@ -69,7 +67,7 @@ def register_shelve(
         shelves_repository, shelves_topics)
     register_shelve_use_case(
         RegisterShelveDTO(
-            product_sku, product_category.upper(), shelve_capacity,
+            product_sku, product_category.upper(),
             shelve_restock_threshold, shelve_stock_amount))
 
 
@@ -133,10 +131,3 @@ commands.add_command(restock_shelve)
 
 if __name__ == '__main__':
     commands()
-
-
-# python -m stock.cli setup-db
-# python -m stock.cli register-shelve --product_sku="testsku" --product_category="fresh" --shelve_capacity=10 --shelve_restock_threshold=5 --shelve_stock_amount=10
-# python -m stock.cli retrieve-shelve --product_sku="testsku"
-# python -m stock.cli deplete-shelve --product_sku="testsku" --amount=5
-# python -m stock.cli restock-shelve --product_sku="testsku" --amount=5

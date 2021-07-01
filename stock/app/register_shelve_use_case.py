@@ -2,7 +2,7 @@ import logging
 from dataclasses import dataclass
 
 from stock.core.product import SKU, Category
-from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
+from stock.core.shelve import RestockThreshold, ProductAmount, Shelve
 from stock.core.services.register_shelve import RegisterShelve
 from stock.core.messages.registered_shelve import RegisteredShelve
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
@@ -13,7 +13,6 @@ from stock.core.interfaces.shelves_repository import ShelvesRepositoryInterface
 class RegisterShelveDTO:
     product_sku: str
     product_category: str
-    shelve_capacity: int
     shelve_restock_threshold: int
     shelve_stock_amount: int
 
@@ -32,7 +31,6 @@ class ReigsterShelveUseCase:
         shelve: Shelve = register_shelve(
             SKU(dto.product_sku),
             Category(dto.product_category),
-            Capacity(dto.shelve_capacity),
             RestockThreshold(dto.shelve_restock_threshold),
             ProductAmount(dto.shelve_stock_amount))
         self._shelves_repo.save_shelve(shelve)

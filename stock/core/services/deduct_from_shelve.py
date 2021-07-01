@@ -1,6 +1,6 @@
 import logging
 from stock.core.product import SKU, Category, Product
-from stock.core.shelve import RestockThreshold, ProductAmount, Capacity, Shelve
+from stock.core.shelve import RestockThreshold, ProductAmount, Shelve
 from stock.core.errors.shelve_understocked import ShelveUnderstocked
 
 
@@ -15,7 +15,7 @@ class DeductFromShelve:
             raise ShelveUnderstocked()
         updated_shelve_stock_amount: ProductAmount = shelve.stock_amount - amount
         updated_shelve = Shelve(
-            shelve.product, shelve.capacity, shelve.restock_threshold,
+            shelve.product, shelve.restock_threshold,
             updated_shelve_stock_amount
         )
         logging.debug("DeductFromShelve.__call__:Completed")
