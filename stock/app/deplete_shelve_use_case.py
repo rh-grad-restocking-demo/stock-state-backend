@@ -8,6 +8,7 @@ from stock.core.messages.restock_threshhold_reached import RestockThresholdReach
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
 from stock.core.interfaces.shelves_repository import ShelvesRepositoryInterface
 from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelveUseCase
+from stock.core.errors.shelve_not_found import ShelveNotFound
 
 
 @dataclass(frozen=True)
@@ -26,8 +27,10 @@ class DepleteShelveUseCase:
         self._shelves_topics: ShelvesTopicsInterface = shelves_topics
 
     def __call__(self, dto: DepleteShelveDTO):
-        retrieve_shelve = RetrieveShelveUseCase(self._shelves_repo)
-        shelve: Shelve = retrieve_shelve(RetrieveShelveDTO(dto.product_sku))
+        shelve: Shelve = self._shelves_repo.retrieve_shelve_by_product_sku(
+            dto.product_sku)
+        if not shelve:
+            raise ShelveNotFound()
         deduct_from_shelve = DeductFromShelve()
         amount_to_be_depleted = ProductAmount(dto.amount)
         updated_shelve: Shelve = deduct_from_shelve(
