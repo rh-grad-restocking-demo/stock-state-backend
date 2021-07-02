@@ -7,6 +7,7 @@ from stock.core.messages.restocked import Restocked
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
 from stock.core.interfaces.shelves_repository import ShelvesRepositoryInterface
 from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelveUseCase
+from stock.core.errors.shelve_not_found import ShelveNotFound
 
 
 @dataclass(frozen=True)
@@ -25,8 +26,10 @@ class RestockShelveUseCase:
         self._shelves_topics: ShelvesTopicsInterface = shelves_topics
 
     def __call__(self, dto: RestockShelveDTO):
-        retrieve_shelve = RetrieveShelveUseCase(self._shelves_repo)
-        shelve: Shelve = retrieve_shelve(RetrieveShelveDTO(dto.product_sku))
+        shelve: Shelve = self._shelves_repo.retrieve_shelve_by_product_sku(
+            dto.product_sku)
+        if not shelve:
+            raise ShelveNotFound()
         add_to_shelve = AddToShelve()
         amount_to_be_added = ProductAmount(dto.amount)
         updated_shelve: Shelve = add_to_shelve(
