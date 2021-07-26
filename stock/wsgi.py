@@ -15,6 +15,7 @@ from stock.app.register_shelve_use_case import RegisterShelveDTO, ReigsterShelve
 from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelveUseCase
 from stock.app.deplete_shelve_use_case import DepleteShelveDTO, DepleteShelveUseCase
 from stock.app.restock_shelve_use_case import RestockShelveDTO, RestockShelveUseCase
+from stock.app.register_shelve_use_case import RegisterShelveDTO, ReigsterShelveUseCase
 from stock.core.errors.shelve_not_found import ShelveNotFound
 
 
@@ -54,6 +55,23 @@ def get_retrieve_shelve(sku: str):
     shelve: Shelve = retrieve_shelve_use_case(
         RetrieveShelveDTO(sku))
     return shelve.to_json(), 200
+
+
+@app.route("/api/shelve", methods=["POST"])
+def post_register_restock():
+    """Register a new shelve with a new product."""
+    global shelves_repository
+    global shelves_topic
+    data = request.json
+    register_shelve_use_case = ReigsterShelveUseCase(
+        shelves_repository, shelves_topics)
+    register_shelve_use_case(RegisterShelveDTO(
+        data["product_sku"],
+        data["product_category"],
+        data["shelve_restock_threshold"],
+        data["shelve_stock_amount"],
+    ))
+    return 'Shelve was registered', 200
 
 
 @app.route("/api/shelve-restock", methods=["POST"])
