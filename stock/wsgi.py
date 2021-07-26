@@ -16,7 +16,6 @@ from stock.app.retrieve_shelve_use_case import RetrieveShelveDTO, RetrieveShelve
 from stock.app.deplete_shelve_use_case import DepleteShelveDTO, DepleteShelveUseCase
 from stock.app.restock_shelve_use_case import RestockShelveDTO, RestockShelveUseCase
 from stock.core.errors.shelve_not_found import ShelveNotFound
-from stock.core.errors.shelve_understocked import ShelveUnderstocked
 
 
 LOGGING_DEBUG_LEVEL = int(os.environ.get("LOGGING_DEBUG_LEVEL", 20))
@@ -84,8 +83,3 @@ def post_shelve_deplete():
 @app.errorhandler(ShelveNotFound)
 def handle_shelve_not_found(error):
     return 'Shelve not found', 404
-
-
-@app.errorhandler(ShelveUnderstocked)
-def handle_shelve_understocked(error):
-    return 'Shelve is understocked', 409
