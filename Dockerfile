@@ -13,9 +13,6 @@ RUN pip install -r requirements.txt
 # copy the content of the local src directory to the working directory
 COPY . .
 
-ENV FLASK_APP=till.app
-
 EXPOSE 8000
 
-# command to run on container start
-CMD [ "python", "-m", "stock.consumer" ]
+CMD ./server.sh
