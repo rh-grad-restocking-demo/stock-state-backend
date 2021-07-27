@@ -58,7 +58,7 @@ class ShelvesTopics(ShelvesTopicsInterface):
             message_handler(purchase_product)
 
         Container(ReceiveHandler(
-            self._host, "itemsPurchasedAddress", callable)
+            self._host, "productPurchasedAddress", callable)
         ).run()
 
 
