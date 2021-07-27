@@ -16,12 +16,12 @@ from stock.app.restock_shelve_use_case import RestockShelveDTO, RestockShelveUse
 
 
 LOGGING_DEBUG_LEVEL = int(os.environ.get("LOGGING_DEBUG_LEVEL", 20))
-DB_HOST = os.environ.get("DB_HOST", "localhost")
+DB_HOST = os.environ.get("DB_HOST", "stock-db")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_USERNAME = os.environ.get("DB_USERNAME", "root")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "toor")
 DB_DATABASE = os.environ.get("DB_DATABASE", "stock")
-BROKER_HOST = os.environ.get("BROKER_HOST", "localhost")
+BROKER_HOST = os.environ.get("BROKER_HOST", "supermarket-broker-amqp-0-svc")
 
 logging.basicConfig(
     stream=sys.stdout,
