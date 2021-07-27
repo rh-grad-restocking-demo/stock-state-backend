@@ -20,7 +20,7 @@ DB_HOST = os.environ.get("DB_HOST", "localhost")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_USERNAME = os.environ.get("DB_USERNAME", "root")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "toor")
-DB_DATABASE = os.environ.get("DB_DATABASE", "stock-state")
+DB_DATABASE = os.environ.get("DB_DATABASE", "stock")
 BROKER_HOST = os.environ.get("BROKER_HOST", "localhost")
 
 logging.basicConfig(
