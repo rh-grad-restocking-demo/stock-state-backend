@@ -6,6 +6,6 @@ from stock.core.product import SKU, Category
 
 @dataclass_json(letter_case=LetterCase.CAMEL)
 @dataclass(frozen=True)
-class RestockThresholdReached:
+class ShelveRestockRequired:
     product_sku: SKU
     product_category: Category

@@ -9,7 +9,7 @@ from proton.reactor import Container
 from stock.core.interfaces.shelves_topics import ShelvesTopicsInterface
 from stock.core.messages.restocked import Restocked
 from stock.core.messages.depleted import Depleted
-from stock.core.messages.restock_threshhold_reached import RestockThresholdReached
+from stock.core.messages.shelve_restock_required import ShelveRestockRequired
 from stock.core.messages.registered_shelve import RegisteredShelve
 from stock.core.messages.purchased_product import PurchasedProduct
 from stock.adapters.topics.send_handler import SendHandler
@@ -35,9 +35,9 @@ class ShelvesTopics(ShelvesTopicsInterface):
         logging.warning(
             "ShelvesTopics.send_depleted_message:Not implemented")
 
-    def send_restock_threshold_reached_message(self, message: RestockThresholdReached):
+    def send_shelve_restock_required_message(self, message: ShelveRestockRequired):
         Container(SendHandler(
-            self._host, "shelveRestockThresholdReachedAddress", message.to_json())
+            self._host, "shelveRestockRequiredAddress", message.to_json())
         ).run()
 
     def send_registered_shelve_message(self, message: RegisteredShelve):
@@ -72,9 +72,9 @@ class ShelvesTopicsDisabled(ShelvesTopicsInterface):
         logging.info(
             "ShelvesTopics.send_depleted_message:Disabled")
 
-    def send_restock_threshold_reached_message(self, message: RestockThresholdReached):
+    def send_shelve_restock_required_message(self, message: ShelveRestockRequired):
         logging.info(
-            "ShelvesTopics.send_restock_threshold_reached_message:Disabled")
+            "ShelvesTopics.send_shelve_restock_required_message:Disabled")
 
     def send_registered_shelve_message(self, message: RegisteredShelve):
         logging.info(
