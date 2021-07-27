@@ -37,7 +37,7 @@ class ShelvesTopics(ShelvesTopicsInterface):
 
     def send_shelve_restock_required_message(self, message: ShelveRestockRequired):
         Container(SendHandler(
-            self._host, "shelveRestockRequiredAddress", message.to_json())
+            self._host, "shelveRestockRequiredAddress", message.to_pam_json_str())
         ).run()
 
     def send_registered_shelve_message(self, message: RegisteredShelve):
